@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Linear implements NeuralNetInterface {
     // NN essentials
@@ -72,7 +74,8 @@ public class Linear implements NeuralNetInterface {
     }
 
     @Override
-    public void load_state_dict(double[][] weights){
+    public void load_state_dict(Map<Integer, Object> state_dict){
+        double[][] weights = (double[][])state_dict.get(0);
         assert weights.length == this.weights.length;
         assert weights[0].length == this.weights[0].length;
         this.weights = Arrays.stream(weights).map(double[]::clone).toArray(double[][]::new);

@@ -2,6 +2,9 @@ package NN;
 
 import Common.CommonInterface;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface NeuralNetInterface extends CommonInterface {
     /**
      * Get the gradients of current pass
@@ -22,9 +25,9 @@ public interface NeuralNetInterface extends CommonInterface {
 
     /**
      * Set weights to given weights values
-     * @param weights saved weights values
+     * @param state_dict saved weights values
      */
-    public void load_state_dict(double[][] weights);
+    public void load_state_dict(Map<Integer, Object> state_dict);
 
     /**
      * Update weights by applying gradient descend with given learning rate

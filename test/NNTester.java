@@ -4,14 +4,19 @@ import NN.Linear;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NNTester {
 
     @Test
     public void testLinearForward(){
         double[] inputVector = {0.5, -0.6};
         double[][] testWeights = {{1.2, 0.04, -0.96}};
+        Map<Integer, Object> state_dict = new HashMap<>();
+        state_dict.put(0, testWeights);
         Linear linear = new Linear(2, 1);
-        linear.load_state_dict(testWeights);
+        linear.load_state_dict(state_dict);
         double actualOutput = linear.forward(inputVector)[0];
         double expectedOutput = 1.796;
 
@@ -22,9 +27,11 @@ public class NNTester {
     public void testLinearBackward(){
         double[] inputVector = {0.5, -0.6};
         double[][] testWeights = {{1.2, 0.04, -0.96}};
+        Map<Integer, Object> state_dict = new HashMap<>();
+        state_dict.put(0, testWeights);
         // linear
         Linear linear = new Linear(2, 1);
-        linear.load_state_dict(testWeights);
+        linear.load_state_dict(state_dict);
         // sigmoid
         Sigmoid sigmoid = new Sigmoid();
 
@@ -60,11 +67,15 @@ public class NNTester {
         double[] inputVector = {0.5, -0.6};
         double[][] testWeights1 = {{1.2, 0.04, -0.96}, {1.2, 0.04, -0.96}};
         double[][] testWeights2 = {{1.2, 0.04, -0.96}};
+        Map<Integer, Object> state_dict1 = new HashMap<>();
+        state_dict1.put(0, testWeights1);
+        Map<Integer, Object> state_dict2 = new HashMap<>();
+        state_dict2.put(0, testWeights2);
         // linear
         Linear linear1 = new Linear(2, 2);
-        linear1.load_state_dict(testWeights1);
+        linear1.load_state_dict(state_dict1);
         Linear linear2 = new Linear(2, 1);
-        linear2.load_state_dict(testWeights2);
+        linear2.load_state_dict(state_dict2);
         // sigmoid
         Sigmoid sigmoid1 = new Sigmoid();
         Sigmoid sigmoid2 = new Sigmoid();

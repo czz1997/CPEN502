@@ -5,6 +5,8 @@ import Activation.Sigmoid;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class XOR implements NeuralNetInterface{
 
@@ -95,8 +97,15 @@ public class XOR implements NeuralNetInterface{
     }
 
     @Override
-    public void load_state_dict(double[][] weights) {
-
+    public void load_state_dict(Map<Integer, Object> state_dict) {
+        int keyCounter = 0;
+        for(Object module: this.modules){
+            if(module instanceof NeuralNetInterface){
+                Map<Integer, Object> sub_state_dict = (Map<Integer, Object>)(state_dict.get(keyCounter));
+                ((NeuralNetInterface) module).load_state_dict(sub_state_dict);
+                keyCounter += 1;
+            }
+        }
     }
 
     @Override
