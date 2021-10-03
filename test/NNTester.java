@@ -1,5 +1,5 @@
 import Activation.Sigmoid;
-import Loss.SELoss;
+import Loss.MSELoss;
 import NN.Linear;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class NNTester {
         output = sigmoid.forward(output);  // 0.8576613198
 
         // error
-        SELoss loss = new SELoss();
+        MSELoss loss = new MSELoss("half");
         double[] error = loss.forward(output, new double[]{1.0});  // 0.01013015
 
         // backward
@@ -90,7 +90,7 @@ public class NNTester {
         Assert.assertEquals(expectedOutput, actualOutput, 0.000001);
 
         // error
-        SELoss loss = new SELoss();
+        MSELoss loss = new MSELoss("half");
         double[] error = loss.forward(output, new double[]{1.0});  // 0.079474461
 
         // backward
