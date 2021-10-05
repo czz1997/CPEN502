@@ -29,6 +29,7 @@ public class MSELoss implements LossBase {
             loss += Math.pow(x[i] - y[i], 2.0);
         switch (this.reduction){
             case "sum":
+                break;
             case "half":
                 loss *= 0.5;
                 break;
