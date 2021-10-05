@@ -37,8 +37,8 @@ public class Trainer {
             for(int i=0;i<this.datasetX.length;i++){
                 double[] y_hat = this.nn.forward(this.datasetX[i]);  // input forward
                 double[] loss = new double[]{this.datasetY[i][0] - y_hat[0]};  // compute loss
-                this.nn.backward((Object) loss, this.lr, this.momentum);  // loss backward
-//                this.nn.step(this.lr, this.momentum);  // weight step
+                this.nn.backward((Object) loss);  // loss backward
+                this.nn.step(this.lr, this.momentum);  // weight step
             }
             // compute error sum
             error = 0;

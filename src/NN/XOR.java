@@ -67,8 +67,8 @@ public class XOR implements NeuralNetInterface{
     public void backward(Object... varargs) {
         assert varargs.length == 3;
 
-        double lr = (double) varargs[1];
-        double momentum = (double) varargs[2];
+//        double lr = (double) varargs[1];
+//        double momentum = (double) varargs[2];
 
         double[] signal = (double[]) varargs[0];  // error signal
         boolean output = true;  // flag to indicate output layer
@@ -89,7 +89,7 @@ public class XOR implements NeuralNetInterface{
                 else {
                     nn.backward(fs, signal, weights);
                 }
-                nn.step(lr, momentum);
+//                nn.step(lr, momentum);
                 signal = nn.grad();
                 weights = nn.state_dict();
             }
@@ -115,11 +115,11 @@ public class XOR implements NeuralNetInterface{
 
     @Override
     public void step(double lr, double momentum) {
-//        for(Object module: this.modules){
-//            if(module instanceof NN.NeuralNetInterface){
-//                ((NN.NeuralNetInterface) module).step(lr, momentum);
-//            }
-//        }
+        for(Object module: this.modules){
+            if(module instanceof NN.NeuralNetInterface){
+                ((NN.NeuralNetInterface) module).step(lr, momentum);
+            }
+        }
     }
 
     @Override
