@@ -43,6 +43,7 @@ public class Part1a {
                         datasetX_bipolar, datasetY_bipolar, 0.05);
                 xorTrainer.train();
             }
+            break;
             case "c":{
                 XOR xorNet = new XOR(true);
                 xorNet.initializeWeights();
