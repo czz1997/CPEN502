@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     data = np.loadtxt(args.input, delimiter=' epoch: ')
 
-    plt.plot(data[:, 0], data[:, 1])
+    plt.plot(data[:, 0] - 1, data[:, 1])
     plt.xlabel("Epoch")
     plt.ylabel("Error")
     plt.xlim(0, data[:, 0].max() * 1.05)
