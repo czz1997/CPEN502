@@ -1,6 +1,7 @@
 import Loss.MSELoss;
 import NN.XOR;
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,29 +28,46 @@ public class Part1a {
 
         // switch Q
         String q = args[0];
+        int repeat = 1;
+        if(args.length >= 2)
+            repeat = Integer.parseInt(args[1]);
+
         switch (q){
             case "a":{
-                XOR xorNet = new XOR();
-                xorNet.initializeWeights();
-                Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("half"),
-                        datasetX_binary, datasetY_binary, 0.05);
-                xorTrainer.train();
+                double[] epochCounters = new double[repeat];
+                for (int i = 0; i < repeat; i++)
+                {
+                    XOR xorNet = new XOR();
+                    xorNet.initializeWeights();
+                    Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("half"),
+                            datasetX_binary, datasetY_binary, 0.05, repeat == 1);
+                    epochCounters[i] = xorTrainer.train();
+                }
+                System.out.println(Arrays.stream(epochCounters).sum() / repeat);
             }
             break;
             case "b":{
-                XOR xorNet = new XOR(true);
-                xorNet.initializeWeights();
-                Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("half"),
-                        datasetX_bipolar, datasetY_bipolar, 0.05);
-                xorTrainer.train();
+                double[] epochCounters = new double[repeat];
+                for (int i = 0; i < repeat; i++) {
+                    XOR xorNet = new XOR(true);
+                    xorNet.initializeWeights();
+                    Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("half"),
+                            datasetX_bipolar, datasetY_bipolar, 0.05, repeat == 1);
+                    epochCounters[i] = xorTrainer.train();
+                }
+                System.out.println(Arrays.stream(epochCounters).sum() / repeat);
             }
             break;
             case "c":{
-                XOR xorNet = new XOR(true);
-                xorNet.initializeWeights();
-                Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.9, new MSELoss("half"),
-                        datasetX_bipolar, datasetY_bipolar, 0.05);
-                xorTrainer.train();
+                double[] epochCounters = new double[repeat];
+                for (int i = 0; i < repeat; i++) {
+                    XOR xorNet = new XOR(true);
+                    xorNet.initializeWeights();
+                    Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.9, new MSELoss("half"),
+                            datasetX_bipolar, datasetY_bipolar, 0.05, repeat == 1);
+                    epochCounters[i] = xorTrainer.train();
+                }
+                System.out.println(Arrays.stream(epochCounters).sum() / repeat);
             }
             break;
             case "testBinary":{
@@ -57,7 +75,7 @@ public class Part1a {
                 XOR xorNet = new XOR();
                 xorNet.load_state_dict(state_dict);  // load weights
                 Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("sum"),
-                        datasetX_binary, datasetY_binary, 0.05);
+                        datasetX_binary, datasetY_binary, 0.05, repeat == 1);
                 xorTrainer.train();
             }
             break;
@@ -66,7 +84,7 @@ public class Part1a {
                 XOR xorNet = new XOR(true);
                 xorNet.load_state_dict(state_dict);  // load weights
                 Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.0, new MSELoss("sum"),
-                        datasetX_bipolar, datasetY_bipolar, 0.05);
+                        datasetX_bipolar, datasetY_bipolar, 0.05, repeat == 1);
                 xorTrainer.train();
             }
             break;
@@ -75,7 +93,7 @@ public class Part1a {
                 XOR xorNet = new XOR(true);
                 xorNet.load_state_dict(state_dict);  // load weights
                 Trainer xorTrainer = new Trainer(xorNet, 0.2, 0.9, new MSELoss("sum"),
-                        datasetX_bipolar, datasetY_bipolar, 0.05);
+                        datasetX_bipolar, datasetY_bipolar, 0.05, repeat == 1);
                 xorTrainer.train();
             }
             break;

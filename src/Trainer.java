@@ -15,10 +15,12 @@ public class Trainer {
     // evaluation
     LossBase lossFunction;
     double targetError;
+    // display
+    boolean verbose;
 
     public Trainer(NeuralNetInterface nn, double lr, double momentum,
                    LossBase lossFunction, double[][] datasetX, double[][] datasetY,
-                   double targetError){
+                   double targetError, boolean verbose){
         this.nn = nn;
         this.lr = lr;
         this.momentum = momentum;
@@ -26,10 +28,12 @@ public class Trainer {
         this.datasetX = datasetX;
         this.datasetY = datasetY;
         this.targetError = targetError;
-        System.out.println("Trainer configuration: lr = " + lr + ", momentum = " + momentum);
+        this.verbose = verbose;
+        if(this.verbose)
+            System.out.println("Trainer configuration: lr = " + lr + ", momentum = " + momentum);
     }
 
-    public void train(){
+    public int train(){
         double error;  // total error
         int epochCounter = 0;
         do {
@@ -47,9 +51,11 @@ public class Trainer {
                 double[] loss = lossFunction.forward(this.datasetY[i], y_hat);  // compute loss
                 error += Arrays.stream(loss).sum();
             }
-            System.out.println((epochCounter + 1) + " epoch: " + error);
+            if(this.verbose)
+                System.out.println((epochCounter + 1) + " epoch: " + error);
             // increment epoch counter
             epochCounter += 1;
         }while (error > this.targetError);
+        return epochCounter;
     }
 }
