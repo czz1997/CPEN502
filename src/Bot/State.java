@@ -1,20 +1,20 @@
 package Bot;
 
 public class State {
-    static int length = 9;
+    static int length = 7;
     private double x;
     private double y;
     private double energy;
     private double heading;
-    private double velocity;
     private double enemyBearing;
     private double enemyDistance;
     private double enemyEnergy;
-    private double enemyVelocity;
-    static int[] lowerBounds = {0, 0, 0, 0, 0, 0, 0, 0, -1, 0};
-    static int[] upperBounds = {7, 5, 3, 3, 3, 3, 3, 3, 1, Action.values().length-1};
+    static int[] lowerBounds = {0, 0, 0, 0, 0, 0, 0, 0};
+    static int[] upperBounds = {7, 5, 3, 3, 3, 3, 3, Action.values().length-1};
     // the following state(s) won't be in the state vector
     private double enemyHeading;
+    private double enemyVelocity;
+    private double velocity;
     private double gunHeading;
 
     // constructor
@@ -66,11 +66,12 @@ public class State {
                 quantizeX(this.x), quantizeY(this.y),
                 Energy.quantizeEnergy(this.energy).getValue(),
                 Heading.quantizeHeading(this.heading, this.x, this.y).getValue(),
-                quantizeVelocity(this.velocity, false),
+//                Velocity.quantizeVelocity(this.velocity).getValue(),
                 Bearing.quantizeBearing(this.enemyBearing, this.x, this.y).getValue(),
                 Distance.quantizeDistance(this.enemyDistance).getValue(),
                 Energy.quantizeEnergy(this.enemyEnergy).getValue(),
-                EnemyVelocity.quantizeEnemyVelocity(this.enemyVelocity).getValue()};
+//                Velocity.quantizeVelocity(this.enemyVelocity).getValue()
+        };
     }
 
 
@@ -186,18 +187,18 @@ public class State {
         }
     }
 
-    private enum EnemyVelocity{
-        CHARGE(1), STILL(0), RETREAT(-1);
+    private enum Velocity {
+        FORWARD(1), STILL(0), BACKWARD(-1);
         private final int value;
-        EnemyVelocity(int value){this.value = value;}
+        Velocity(int value){this.value = value;}
         public int getValue(){return this.value;}
-        static EnemyVelocity quantizeEnemyVelocity(double value) {
+        static Velocity quantizeVelocity(double value) {
             if(value < -1)
-                return EnemyVelocity.RETREAT;
+                return Velocity.BACKWARD;
             else if(value > 1)
-                return EnemyVelocity.CHARGE;
+                return Velocity.FORWARD;
             else
-                return EnemyVelocity.STILL;
+                return Velocity.STILL;
         }
     }
 

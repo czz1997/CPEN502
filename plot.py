@@ -11,11 +11,11 @@ if __name__ == "__main__":
     parser.add_argument('-input', type=str)
     args = parser.parse_args()
 
-    data = np.loadtxt(args.input, delimiter=' epoch: ')
+    data = np.loadtxt(args.input, delimiter=' ')
 
     plt.plot(data[:, 0] - 1, data[:, 1])
-    plt.xlabel("Epoch")
-    plt.ylabel("Error")
+    plt.xlabel("Rounds")
+    plt.ylabel("Win Rate")
     plt.xlim(0, data[:, 0].max() * 1.05)
     plt.ylim(0, data[:, 1].max() * 1.05)
     fname = os.path.splitext(os.path.basename(args.input))[0] + '.jpg'

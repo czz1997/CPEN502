@@ -157,6 +157,7 @@ public class RLBot extends AdvancedRobot{
             targetStateActionVector[targetStateActionVector.length - 1] = 0;
         }
         double prevQ = agent.forward(this.previousStateActionVector)[0];
+        this.instantReward = Math.max(-1, Math.min(1, this.instantReward));
         double newQ = prevQ + this.alpha * (this.instantReward +
                 this.gamma * agent.forward(targetStateActionVector)[0] - prevQ);
         // clear intermediate reward
@@ -179,22 +180,12 @@ public class RLBot extends AdvancedRobot{
         switch (this.action){
             case ADVANCE:
             {
-                setTurnRight(this.state.getEnemyBearing());
-                setAhead(100);
-                execute();
+                ahead(100);
             }
             break;
             case RETREAT:
             {
-                if(this.state.getEnemyBearing() > 0)
-                {
-                    setTurnLeft(100 - this.state.getEnemyBearing());
-                }
-                else{
-                    setTurnRight(100 + this.state.getEnemyBearing());
-                }
-                setAhead(100);
-                execute();
+                back(100);
             }
             break;
             case FIRE:
@@ -207,30 +198,14 @@ public class RLBot extends AdvancedRobot{
             break;
             case CIRCLE:
             {
-                if(this.state.getEnemyBearing() > 0){
-                    setTurnRight(this.state.getEnemyBearing() - 90);
-                }
-                else{
-                    setTurnRight(this.state.getEnemyBearing() + 90);
-                }
-                setAhead(50);
-                execute();
+                turnRight(90);
+                ahead(100);
             }
             break;
             case HEAD2CENTER:
             {
-                double[] toCenter = new double[]{400 - this.getX(), 300 - this.getY()};
-                double lengthToCenter = Math.sqrt(Math.pow(toCenter[0], 2) + Math.pow(toCenter[1], 2));
-                toCenter[0] /= lengthToCenter;
-                toCenter[1] /= lengthToCenter;
-//                double[] heading = new double[]{Math.sin(getHeadingRadians()), Math.cos(getHeadingRadians())};
-                double cosCenter = 0 * toCenter[0] + 1 + toCenter[1];
-                double centerRadian = Math.acos(cosCenter);
-                if(toCenter[0] < 0)
-                    centerRadian = 2 * Math.PI - centerRadian;
-                setTurnRightRadians(centerRadian - getHeadingRadians());
-                setAhead(100);
-                execute();
+                turnLeft(90);
+                ahead(100);
             }
             break;
         }
@@ -249,16 +224,16 @@ public class RLBot extends AdvancedRobot{
     // Receive reward based on event
     public void onBulletHit(BulletHitEvent e){
         // 3x fire power points
-        this.instantReward += Reward.BULLETHIT.getValue() * e.getBullet().getPower();
+        this.instantReward += Reward.BULLETHIT.getValue();// * e.getBullet().getPower();
     }
 
     public void onBulletMissed(BulletMissedEvent e){
         // negative fire power points
-        this.instantReward += Reward.BULLETMISSED.getValue() * e.getBullet().getPower();
+        this.instantReward += Reward.BULLETMISSED.getValue();// * e.getBullet().getPower();
     }
 
     public void onHitByBullet(HitByBulletEvent e){
-        this.instantReward += Reward.HITBYBULLET.getValue() * e.getPower();
+        this.instantReward += Reward.HITBYBULLET.getValue();// * e.getPower();
     }
 
     public void onHitRobot(HitRobotEvent e){
