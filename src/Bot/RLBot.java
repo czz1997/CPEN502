@@ -95,11 +95,12 @@ public class RLBot extends AdvancedRobot{
                         // do not update Q after the very first action
                         firstAct = false;
                     }
+                    this.operationMode = OperationMode.SCAN;
                     break;
                 }
             }
             // reverse operation
-            this.operationMode = this.operationMode.getType(1 - this.operationMode.getValue());
+//            this.operationMode = this.operationMode.getType(1 - this.operationMode.getValue());
         }
     }
 
@@ -212,13 +213,17 @@ public class RLBot extends AdvancedRobot{
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-        // store previous state
-        System.arraycopy(this.stateActionVector, 0, this.previousStateActionVector, 0, State.length + 1);
-        // capture state
-        this.state.setMyState(getX(), getY(), getEnergy(), getHeading(), getGunHeading(), getVelocity());
-        this.state.setEnemyState(e.getBearing(), e.getDistance(), e.getEnergy(), e.getHeading(), e.getVelocity());
-        // update state
-        System.arraycopy(this.state.getStateVector(), 0, this.stateActionVector, 0, State.length);
+        if(this.operationMode == OperationMode.SCAN) {
+            // store previous state
+            System.arraycopy(this.stateActionVector, 0, this.previousStateActionVector, 0, State.length + 1);
+            // capture state
+            this.state.setMyState(getX(), getY(), getEnergy(), getHeading(), getGunHeading(), getVelocity());
+            this.state.setEnemyState(e.getBearing(), e.getDistance(), e.getEnergy(), e.getHeading(), e.getVelocity());
+            // update state
+            System.arraycopy(this.state.getStateVector(), 0, this.stateActionVector, 0, State.length);
+            // reverse operation mode
+            this.operationMode = OperationMode.ACT;
+        }
     }
 
     // Receive reward based on event
@@ -255,34 +260,14 @@ public class RLBot extends AdvancedRobot{
     public void onDeath(DeathEvent e){
         // receive terminal reward
         this.instantReward += Reward.DEATH.getValue();
-        // update Q
-        agent.updateQ(this.previousStateActionVector, computeQ(true));
-
-        // update statistics
-        rounds += 1;
-        roundTo100 += 1;
-        if(roundTo100 == 100) {
-            this.printMatchStatistics();
-            roundTo100 = 0;
-            wins = 0;
-        }
     }
 
     public void onWin(WinEvent event){
         // receive terminal reward
         this.instantReward += Reward.WIN.getValue();
-        // update Q
-        agent.updateQ(this.previousStateActionVector, computeQ(true));
 
-        // update statistics
-        rounds += 1;
+        // increment win counter
         wins += 1;
-        roundTo100 += 1;
-        if(roundTo100 == 100) {
-            this.printMatchStatistics();
-            roundTo100 = 0;
-            wins = 0;
-        }
     }
 
     private void printMatchStatistics(){
@@ -301,6 +286,20 @@ public class RLBot extends AdvancedRobot{
         log.println(rounds + " " + String.format("%.2f", winRate));
         log.flush();
         log.close();
+    }
+
+    public void onRoundEnded(RoundEndedEvent event){
+        // update Q
+        agent.updateQ(this.previousStateActionVector, computeQ(true));
+
+        // update statistics
+        rounds += 1;
+        roundTo100 += 1;
+        if(roundTo100 == 200) {
+            this.printMatchStatistics();
+            roundTo100 = 0;
+            wins = 0;
+        }
     }
 
     public void onBattleEnded(BattleEndedEvent event){
