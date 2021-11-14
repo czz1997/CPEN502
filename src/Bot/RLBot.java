@@ -117,7 +117,7 @@ public class RLBot extends AdvancedRobot{
      * @return greedy action
      */
     private Action getGreedyAction(double[] stateActionVector){
-        double maxQ = Double.MIN_VALUE;
+        double maxQ = - Double.MAX_VALUE;
         Action greedyAction = Action.getAction(0);  // default
         for(Action a: Action.values()){
             // find a such that Q(s, a) is the largest
