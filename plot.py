@@ -17,7 +17,7 @@ if __name__ == "__main__":
     plt.xlabel("Rounds")
     plt.ylabel("Win Rate")
     plt.xlim(0, data[:, 0].max() * 1.05)
-    plt.ylim(0, data[:, 1].max() * 1.05)
+    plt.ylim(data[:, 1].min() * 0.95, data[:, 1].max() * 1.05)
     fname = os.path.splitext(os.path.basename(args.input))[0] + '.jpg'
     plt.savefig(fname)
     print("Figure saved as '%s'" % fname)

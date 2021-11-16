@@ -79,7 +79,10 @@ public class StateActionLUT implements LUTInterface, RLInterface {
 
     @Override
     public void initialiseLUT() {
-        Arrays.fill(this.LUT, 0);
+//        Arrays.fill(this.LUT, 0);
+        for(int i=0; i<this.LUT.length; i++){
+            this.LUT[i] = Math.random();
+        }
     }
 
     @Override

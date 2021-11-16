@@ -1,9 +1,9 @@
 package Bot;
 
 public enum Action {
-    CIRCLE(0), HEAD2CENTER(1),
-    ADVANCE(2), RETREAT(3),
-    FIRE(4);
+    CIRCLE(2), HEAD2CENTER(4),
+    ADVANCE(0), RETREAT(1),
+    FIRE(3);
     // STOP, RETREAT, ADVANCE, CIRCLE;
     private final int value;
     Action(int value){
@@ -18,6 +18,6 @@ public enum Action {
                 return a;
             }
         }
-        return Action.CIRCLE;
+        return Action.ADVANCE;
     }
 }

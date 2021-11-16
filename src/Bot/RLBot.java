@@ -5,6 +5,7 @@ import robocode.*;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
@@ -41,7 +42,7 @@ public class RLBot extends AdvancedRobot{
             + "-" + RLBot.class.getSimpleName() + ".txt";
 
     // RL hypers
-    public static double epsilon = 0.65;  // exploration rate, reduced over time
+    public static double epsilon = 0.8;  // exploration rate, reduced over time
     private final double alpha = 0.7;  // learning rate
     private final double gamma = 0.9;  // discount factor
     private final boolean offPolicy = true;  // policy indicator
@@ -58,9 +59,9 @@ public class RLBot extends AdvancedRobot{
         this.instantReward = 0;  // clean up reward
         boolean firstAct = true;  // indicator for first action
 
-        // decrease epsilon by 0.05 every 2500 rounds
-        if((rounds + 1) % 2500 == 0){
-            epsilon = Math.max(0, epsilon - 0.05);
+        // decrease epsilon to 0 by 4000 rounds
+        if(rounds == 4000){
+            epsilon = 0;
         }
 
         // loop for normal behaviours
@@ -74,7 +75,7 @@ public class RLBot extends AdvancedRobot{
                 }
                 case ACT:{
                     // choose action
-                    if(Math.random() <= epsilon)
+                    if(Math.random() < epsilon)
                     {
                         // explore
                         this.action = this.getRandomAction();
@@ -181,12 +182,22 @@ public class RLBot extends AdvancedRobot{
         switch (this.action){
             case ADVANCE:
             {
-                ahead(100);
+                setTurnRight(this.state.getEnemyBearing());
+                setAhead(100);
+                execute();
             }
             break;
             case RETREAT:
             {
-                back(100);
+                if(this.state.getEnemyBearing() > 0)
+                {
+                    setTurnLeft(100 - this.state.getEnemyBearing());
+                }
+                else{
+                    setTurnRight(100 + this.state.getEnemyBearing());
+                }
+                setAhead(100);
+                execute();
             }
             break;
             case FIRE:
@@ -199,31 +210,45 @@ public class RLBot extends AdvancedRobot{
             break;
             case CIRCLE:
             {
-                turnRight(90);
-                ahead(100);
+                if(this.state.getEnemyBearing() > 0){
+                    setTurnRight(this.state.getEnemyBearing() - 90);
+                }
+                else{
+                    setTurnRight(this.state.getEnemyBearing() + 90);
+                }
+                setAhead(50);
+                execute();
             }
             break;
             case HEAD2CENTER:
             {
-                turnLeft(90);
-                ahead(100);
+                double[] toCenter = new double[]{400 - this.getX(), 300 - this.getY()};
+                double lengthToCenter = Math.sqrt(Math.pow(toCenter[0], 2) + Math.pow(toCenter[1], 2));
+                toCenter[0] /= lengthToCenter;
+                toCenter[1] /= lengthToCenter;
+//                double[] heading = new double[]{Math.sin(getHeadingRadians()), Math.cos(getHeadingRadians())};
+                double cosCenter = Math.min(1., Math.max(-1., 0 * toCenter[0] + 1 * toCenter[1]));
+                double centerRadian = Math.acos(cosCenter);
+                if(toCenter[0] < 0)
+                    centerRadian = 2 * Math.PI - centerRadian;
+                setTurnRightRadians(centerRadian - getHeadingRadians());
+                setAhead(100);
+                execute();
             }
             break;
         }
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-        if(this.operationMode == OperationMode.SCAN) {
-            // store previous state
-            System.arraycopy(this.stateActionVector, 0, this.previousStateActionVector, 0, State.length + 1);
-            // capture state
-            this.state.setMyState(getX(), getY(), getEnergy(), getHeading(), getGunHeading(), getVelocity());
-            this.state.setEnemyState(e.getBearing(), e.getDistance(), e.getEnergy(), e.getHeading(), e.getVelocity());
-            // update state
-            System.arraycopy(this.state.getStateVector(), 0, this.stateActionVector, 0, State.length);
-            // reverse operation mode
-            this.operationMode = OperationMode.ACT;
-        }
+        // store previous state
+        System.arraycopy(this.stateActionVector, 0, this.previousStateActionVector, 0, State.length + 1);
+        // capture state
+        this.state.setMyState(getX(), getY(), getEnergy(), getHeading(), getGunHeading(), getVelocity());
+        this.state.setEnemyState(e.getBearing(), e.getDistance(), e.getEnergy(), e.getHeading(), e.getVelocity());
+        // update state
+        System.arraycopy(this.state.getStateVector(), 0, this.stateActionVector, 0, State.length);
+        // reverse operation mode
+        this.operationMode = OperationMode.ACT;
     }
 
     // Receive reward based on event

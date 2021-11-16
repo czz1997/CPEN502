@@ -92,7 +92,7 @@ public class State {
             else if(value < 15){
                 return Energy.CRITICAL;
             }
-            else if(value < 50){
+            else if(value < 40){
                 return Energy.LOW;
             }
             else{
@@ -111,13 +111,13 @@ public class State {
             return this.value;
         }
         static Distance quantizeDistance(double value){
-            if(value < 80){
+            if(value < 60){
                 return Distance.DANGERCLOSE;
             }
-            else if(value < 200){
+            else if(value < 150){
                 return Distance.NEAR;
             }
-            else if(value < 500){
+            else if(value < 300){
                 return Distance.MEDIUM;
             }
             else{
