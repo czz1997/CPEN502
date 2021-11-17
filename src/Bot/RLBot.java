@@ -43,7 +43,7 @@ public class RLBot extends AdvancedRobot{
 
     // RL hypers
     public static double epsilon = 0.8;  // exploration rate, reduced over time
-    private final double alpha = 0.7;  // learning rate
+    private final double alpha = 0.3;  // learning rate
     private final double gamma = 0.9;  // discount factor
     private final boolean offPolicy = true;  // policy indicator
 
@@ -60,7 +60,7 @@ public class RLBot extends AdvancedRobot{
         boolean firstAct = true;  // indicator for first action
 
         // decrease epsilon to 0 by 4000 rounds
-        if(rounds == 4000){
+        if(rounds == 5600){
             epsilon = 0;
         }
 
