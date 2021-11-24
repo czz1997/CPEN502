@@ -2,6 +2,7 @@ package Bot;
 import LUT.StateActionLUT;
 import robocode.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ public class RLBot extends AdvancedRobot{
     private Action action;
     private double instantReward;
     public static RLInterface agent = new StateActionLUT(State.lowerBounds, State.upperBounds);
-    private String modelFileName = getClass().getSimpleName() + "-" + agent.getClass().getSimpleName() + ".txt";
+    private String modelFileName = getClass().getSimpleName() + "-" + agent.getClass().getSimpleName() + "-" + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date()) + ".txt";
     static String logFileName = (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date())
             + "-" + RLBot.class.getSimpleName() + ".txt";
 
@@ -329,6 +330,6 @@ public class RLBot extends AdvancedRobot{
 
     public void onBattleEnded(BattleEndedEvent event){
         // save model
-
+        agent.save(new File(getDataDirectory() + "\\" + this.modelFileName));
     }
 }

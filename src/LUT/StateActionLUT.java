@@ -2,9 +2,7 @@ package LUT;
 
 import Bot.RLInterface;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Arrays;
 
 import robocode.*;
@@ -58,15 +56,13 @@ public class StateActionLUT implements LUTInterface, RLInterface {
         saveFile.println(this.LUT.length);  // # of row
         saveFile.println(1);  // # of dimensions per row
 
-        for(int i = 0; i<this.LUT.length; i++){
-            StringBuilder row = new StringBuilder();
-            int[] vector = this.index2Vector(i);
-            for(int j=0;j<vector.length;j++){
-                if(j!=vector.length - 1)
-                    row.append(String.format("%d,", vector[j]));
-                else
-                    row.append(String.format("%d", vector[j]));
-            }
+        for (double v : this.LUT) {
+//            StringBuilder row = new StringBuilder();
+//            int[] vector = this.index2Vector(i);
+//            for (int k : vector) {
+//                row.append(String.format("%d,", k));
+//            }
+            String row = String.format("%.2f", v);
             saveFile.println(row);
         }
         saveFile.close();
@@ -74,7 +70,22 @@ public class StateActionLUT implements LUTInterface, RLInterface {
 
     @Override
     public void load(String argFileName) throws IOException {
+        FileInputStream inputFile = new FileInputStream(argFileName);
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputFile));
 
+        int numRows = Integer.valueOf(inputReader.readLine());
+        int numDimensions = Integer.valueOf(inputReader.readLine());
+
+        if(numRows != this.LUT.length || numDimensions != 1){
+            System.out.printf("[ERROR] Dimension mismatch when loading LUT table from file: expected %s, %s, got %s, %s.\n",
+                    this.LUT.length, 1, numRows, numDimensions);
+            inputReader.close();
+            throw new IOException();
+        }
+        for(int i=0;i<this.LUT.length;i++){
+            String q = inputReader.readLine();
+            this.LUT[i] = Double.parseDouble(q);
+        }
     }
 
     @Override
