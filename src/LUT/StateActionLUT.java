@@ -107,7 +107,7 @@ public class StateActionLUT implements LUTInterface, RLInterface {
         return index;
     }
 
-    private int[] index2Vector(int index){
+    public int[] index2Vector(int index){
         int[] vector = new int[this.coefficients.length];
         if(index >= this.LUT.length)
             throw new IndexOutOfBoundsException();
@@ -116,5 +116,9 @@ public class StateActionLUT implements LUTInterface, RLInterface {
             index = index % this.coefficients[i];
         }
         return vector;
+    }
+
+    public int getLength(){
+        return this.LUT.length;
     }
 }

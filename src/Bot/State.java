@@ -1,7 +1,7 @@
 package Bot;
 
 public class State {
-    static int length = 7;
+    public static int length = 7;
     private double x;
     private double y;
     private double energy;
@@ -9,8 +9,8 @@ public class State {
     private double enemyBearing;
     private double enemyDistance;
     private double enemyEnergy;
-    static int[] lowerBounds = {0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] upperBounds = {7, 5, 3, 3, 3, 3, 3, Action.values().length-1};
+    public static int[] lowerBounds = {0, 0, 0, 0, 0, 0, 0, 0};
+    public static int[] upperBounds = {7, 5, 3, 3, 3, 3, 3, Action.values().length-1};
     // the following state(s) won't be in the state vector
     private double enemyHeading;
     private double enemyVelocity;
