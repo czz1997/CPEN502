@@ -47,7 +47,7 @@ public class Part3_Offline {
         // hypers
         double lr = 0.0001;
         double momentum = 0.9;
-        double targetError = 2000;
+        double targetError = 1500;
         LossBase criterion = new MSELoss("half");
 
         // net
@@ -64,6 +64,6 @@ public class Part3_Offline {
         System.out.println("Training completed in " + totalEpoch + "Epochs.");
 
         // save weights
-        net.save(new File("weights\\" + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date()) + ".txt"));
+        net.save(new File("out\\production\\CPEN502\\Bot\\RLBot.data\\" + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date()) + ".weights"));
     }
 }
