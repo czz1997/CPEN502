@@ -44,6 +44,7 @@ public class ReplayMemory<T> {
 
     // Retrieve a random sample of n items from the memory and return it as an array
     public Object[] randomSample(int n) {
+        n = Math.min(n, this.sizeOf());
         if (memory.isEmpty())
             return EMPTYARRAY;
         else {
