@@ -2,6 +2,7 @@ import Loss.LossBase;
 import NN.NeuralNetInterface;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class Trainer {
     // network
@@ -38,9 +39,11 @@ public class Trainer {
         int epochCounter = 0;
         do {
             // train
+            Random random = new Random();
             for(int i=0;i<this.datasetX.length;i++){
-                double[] y_hat = this.nn.forward(this.datasetX[i]);  // input forward
-                double[] loss = new double[]{this.datasetY[i][0] - y_hat[0]};  // compute loss
+                int index = random.nextInt(datasetX.length);
+                double[] y_hat = this.nn.forward(this.datasetX[index]);  // input forward
+                double[] loss = new double[]{this.datasetY[index][0] - y_hat[0]};  // compute loss
                 this.nn.backward((Object) loss, this.lr, this.momentum);  // loss backward
 //                this.nn.step(this.lr, this.momentum);  // weight step
             }
