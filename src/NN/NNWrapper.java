@@ -15,8 +15,8 @@ public class NNWrapper implements RLInterface {
     private final ReplayMemory<double[]> buffer;
 
     // hypers
-    double lr = 0.00001;
-    double momentum = 0.9;
+    double lr = 0.0005;
+    double momentum = 0.95;
     int buffer_size = 20000;
     boolean buffer_enabled = false;
     int replay_sample_size = 8;
