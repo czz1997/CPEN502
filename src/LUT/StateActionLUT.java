@@ -29,6 +29,15 @@ public class StateActionLUT implements LUTInterface, RLInterface {
         this.upperBounds = upperBounds;
         this.initialiseLUT();
     }
+    public StateActionLUT(int[] lowerBounds, int[] upperBounds, String saveFileName) {
+        this(lowerBounds, upperBounds);
+        try{
+            this.load(saveFileName);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void updateQ(double[] stateActionVector, double newQ) {

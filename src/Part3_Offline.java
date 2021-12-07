@@ -47,7 +47,7 @@ public class Part3_Offline {
         // hypers
         double lr = 0.0001;
         double momentum = 0.9;
-        double targetError = 1500;
+        double targetError = 700;
         LossBase criterion = new MSELoss("half");
 
         // net

@@ -58,7 +58,7 @@ public class Trainer {
                 System.out.println((epochCounter + 1) + " epoch: " + error);
             // increment epoch counter
             epochCounter += 1;
-        }while (error > this.targetError);
+        }while (error > this.targetError && epochCounter < 750);
         return epochCounter;
     }
 }

@@ -31,29 +31,45 @@ public class LUT2Dataset {
             return;
         }
 
-        saveFile.println(lut.getLength());  // # of row
+        // fetch non-zero q rows
+        int rows = 0;
+        for (int i=0;i<lut.getLength();i++) {
+            int[] vector = lut.index2Vector(i);
+            double[] sa = Arrays.stream(vector).asDoubleStream().toArray();
+            double q = Math.max(-2, Math.min(2, lut.forward(sa)[0]));
+            if(q != 0){
+                rows ++;
+            }
+        }
+
+        saveFile.println(rows);  // # of row
         saveFile.println(State.length + 2);  // # of dimensions per row
 
         for (int i=0;i<lut.getLength();i++) {
             StringBuilder row = new StringBuilder();
             int[] vector = lut.index2Vector(i);
             double[] sa = Arrays.stream(vector).asDoubleStream().toArray();
-            double q = Math.max(-1, Math.min(1, lut.forward(sa)[0]));
+            double q = Math.max(-2, Math.min(2, lut.forward(sa)[0]));
+            if(q == 0){
+                continue;
+            }
             for (int j=0; j<vector.length; j++) {
                 double interval;
                 if(j < State.length){
                     // state
-                    interval = 2. / (State.upperBounds[j] - State.lowerBounds[j] + 1);
+                    interval = 2. / (State.upperBounds[j] - State.lowerBounds[j]);
+                    // normalize
+                    sa[j] = Math.min(1, Math.max(-1., -1. + (vector[j] - State.lowerBounds[j]) * interval));
                 }
                 else{
                     // action
-                    interval = 2. / Action.values().length;
+                    interval = 2. / (Action.values().length - 1);
+                    // normalize
+                    sa[j] = Math.min(1., Math.max(-1., -1. + vector[j] * interval));
                 }
-                // normalize
-                sa[j] = -1 + 0.5 * interval + vector[j] * interval;
-                row.append(String.format("%.2f,", sa[j]));
+                row.append(String.format("%f,", sa[j]));
             }
-            row.append(String.format("%.2f", q));
+            row.append(String.format("%f", q));
             saveFile.println(row);
         }
         saveFile.close();

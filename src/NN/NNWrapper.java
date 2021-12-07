@@ -70,8 +70,10 @@ public class NNWrapper implements RLInterface {
 
     @Override
     public double[] forward(double[] X) {
-        this.normalize_X(X);
-        return this.net.forward(X);
+        double[] input = new double[X.length];
+        System.arraycopy(X, 0, input, 0, X.length);
+        this.normalize_X(input);
+        return this.net.forward(input);
     }
 
     @Override
@@ -89,14 +91,16 @@ public class NNWrapper implements RLInterface {
             double interval;
             if(i < State.length){
                 // state
-                interval = 2. / (State.upperBounds[i] - State.lowerBounds[i] + 1);
+                interval = 2. / (State.upperBounds[i] - State.lowerBounds[i]);
+                // normalize
+                X[i] = Math.min(1, Math.max(-1., -1. + (X[i] - State.lowerBounds[i]) * interval));
             }
             else{
                 // action
-                interval = 2. / Action.values().length;
+                interval = 2. / (Action.values().length - 1);
+                // normalize
+                X[i] = Math.min(1., Math.max(-1., -1. + X[i] * interval));
             }
-            // normalize
-            X[i] = -1 + 0.5 * interval + X[i] * interval;
         }
     }
 }

@@ -38,7 +38,7 @@ public class RLBot extends AdvancedRobot{
     private final State state = new State();  // current state
     private Action action;
     private double instantReward;
-    public static RLInterface agent = new NNWrapper("out\\production\\CPEN502\\Bot\\RLBot.data\\offline-weights.txt"); //new StateActionLUT(State.lowerBounds, State.upperBounds);
+    public static RLInterface agent = new NNWrapper("out\\production\\CPEN502\\Bot\\RLBot.data\\2021-12-06-15-45-15.weights"); //new StateActionLUT(State.lowerBounds, State.upperBounds);
     private String modelFileName = getClass().getSimpleName() + "-" + agent.getClass().getSimpleName() + "-" + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date()) + ".txt";
     static String logFileName = (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date())
             + "-" + RLBot.class.getSimpleName() + ".txt";
