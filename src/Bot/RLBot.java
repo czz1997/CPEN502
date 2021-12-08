@@ -55,6 +55,7 @@ public class RLBot extends AdvancedRobot{
     public static int rounds = 0;  // # of rounds
     public static int roundTo100 = 0;
     public static int wins = 0;  // # of winning rounds
+    public static double rewards = 0;
     public static int totalIterations = 0;  // # of total iterations (Q update calls)
 
     public void run() {
@@ -64,8 +65,8 @@ public class RLBot extends AdvancedRobot{
         boolean firstAct = true;  // indicator for first action
 
         // decrease epsilon to 0 by 4000 rounds
-        if((rounds+1) % 2000 == 0){
-            epsilon = Math.max(0, epsilon - 0.05);
+        if((rounds+1) % 35 == 0){
+            epsilon = epsilon * 0.9;
         }
 
         // loop for normal behaviours
@@ -163,9 +164,11 @@ public class RLBot extends AdvancedRobot{
             targetStateActionVector[targetStateActionVector.length - 1] = 0;
         }
         double prevQ = agent.forward(this.previousStateActionVector)[0];
-        this.instantReward = Math.max(-1, Math.min(1, this.instantReward));
+//        this.instantReward = Math.max(-1, Math.min(1, this.instantReward));
         double newQ = prevQ + this.alpha * (this.instantReward +
                 this.gamma * agent.forward(targetStateActionVector)[0] - prevQ);
+        // update total rewards
+        rewards += this.instantReward;
         // clear intermediate reward
         this.instantReward = 0;
         // update count
@@ -302,12 +305,14 @@ public class RLBot extends AdvancedRobot{
     private void printMatchStatistics(){
         double winRate = (double) wins / roundTo100;
         // print
-        out.println("[INFO] Matches " + rounds + "/120000, W/L " + winRate);
+        out.println("[INFO] Matches " + rounds + "/120000, W/L " + winRate + ", rewards " + rewards);
         out.println("[INFO] Total iterations: " + totalIterations);
         // log
         PrintStream log = null;
+        PrintStream log2 = null;
         try{
             log = new PrintStream(new RobocodeFileOutputStream(getDataDirectory() + "\\" + logFileName, true));
+            log2 = new PrintStream(new RobocodeFileOutputStream(getDataDirectory() + "\\r" + logFileName, true));
         } catch (IOException e) {
             System.out.println("[ERROR] Unable to create log file.");
             return;
@@ -315,6 +320,9 @@ public class RLBot extends AdvancedRobot{
         log.println(rounds + " " + String.format("%.2f", winRate));
         log.flush();
         log.close();
+        log2.println(rounds + " " + String.format("%.2f", rewards));
+        log2.flush();
+        log2.close();
     }
 
     public void onRoundEnded(RoundEndedEvent event){
@@ -328,6 +336,7 @@ public class RLBot extends AdvancedRobot{
             this.printMatchStatistics();
             roundTo100 = 0;
             wins = 0;
+            rewards = 0;
         }
     }
 
