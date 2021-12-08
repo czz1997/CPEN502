@@ -42,7 +42,7 @@ public class NNWrapper implements RLInterface {
 
     @Override
     public void updateQ(double[] stateActionVector, double newQ) {
-        newQ = Math.max(-2., Math.min(2., newQ));
+//        newQ = Math.max(-2., Math.min(2., newQ));
         double[] input = new double[stateActionVector.length];
         System.arraycopy(stateActionVector, 0, input, 0, stateActionVector.length);
         this.normalize_X(input);

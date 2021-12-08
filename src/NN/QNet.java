@@ -1,4 +1,5 @@
 package NN;
+import Activation.NoActivation;
 import Activation.ReLU;
 import Activation.Sigmoid;
 
@@ -9,7 +10,7 @@ public class QNet extends Module{
                 new Linear(in_dim,h_dim),
                 new ReLU(0.01),
                 new Linear(h_dim,1),
-                new Sigmoid(-2, 2)
+                new NoActivation(),
         };
     }
 }

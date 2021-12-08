@@ -9,6 +9,8 @@ public class ReLU implements ActivationBase {
     public ReLU(double slope){
         this.slope = slope;
     }
+
+    @Override
     public double[] forward(double[] X) {
         double[] output = new double[X.length];
         // Element-wise
