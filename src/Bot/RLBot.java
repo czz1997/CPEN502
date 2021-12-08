@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Random;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
@@ -35,13 +36,14 @@ public class RLBot extends AdvancedRobot{
     private OperationMode operationMode;  // operation mode
     private final double[] previousStateActionVector = new double[State.length + 1];  // previous state action vector
     private final double[] stateActionVector = new double[State.length + 1];  // current state action vector
-    private final State state = new State();  // current state
+    private final State state = new State(agent);  // current state
     private Action action;
     private double instantReward;
-    public static RLInterface agent = new NNWrapper("out\\production\\CPEN502\\Bot\\RLBot.data\\2021-12-06-15-45-15.weights"); //new StateActionLUT(State.lowerBounds, State.upperBounds);
+    public static RLInterface agent = new NNWrapper(); //new StateActionLUT(State.lowerBounds, State.upperBounds);
     private String modelFileName = getClass().getSimpleName() + "-" + agent.getClass().getSimpleName() + "-" + (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date()) + ".txt";
     static String logFileName = (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format(new Date())
             + "-" + RLBot.class.getSimpleName() + ".txt";
+    static Random random = new Random();
 
     // RL hypers
     public static double epsilon = 0.8;  // exploration rate, reduced over time
@@ -62,8 +64,8 @@ public class RLBot extends AdvancedRobot{
         boolean firstAct = true;  // indicator for first action
 
         // decrease epsilon to 0 by 4000 rounds
-        if(rounds == 5600){
-            epsilon = 0;
+        if((rounds+1) % 2000 == 0){
+            epsilon = Math.max(0, epsilon - 0.05);
         }
 
         // loop for normal behaviours
@@ -112,7 +114,7 @@ public class RLBot extends AdvancedRobot{
      * @return randomized action
      */
     private Action getRandomAction(){
-        return Action.getAction((int) System.currentTimeMillis() % Action.values().length);
+        return Action.getAction(random.nextInt(Action.values().length));
     }
 
     /**

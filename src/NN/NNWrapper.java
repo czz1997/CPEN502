@@ -42,16 +42,18 @@ public class NNWrapper implements RLInterface {
 
     @Override
     public void updateQ(double[] stateActionVector, double newQ) {
-        this.normalize_X(stateActionVector);
+        double[] input = new double[stateActionVector.length];
+        System.arraycopy(stateActionVector, 0, input, 0, stateActionVector.length);
+        this.normalize_X(input);
         if(this.buffer_enabled){
             // buffer experience
-            double[] experience = new double[stateActionVector.length + 1];
-            System.arraycopy(stateActionVector, 0, experience, 0, stateActionVector.length);
+            double[] experience = new double[input.length + 1];
+            System.arraycopy(input, 0, experience, 0, input.length);
             experience[experience.length - 1] = newQ;
             this.buffer.add(experience);
             // draw experiences
             Object[] experiences = this.buffer.randomSample(replay_sample_size);
-            double[] X = new double[stateActionVector.length];
+            double[] X = new double[input.length];
             for(Object sample: experiences){
                 double[] exp = (double[]) sample;
                 System.arraycopy(exp, 0, X, 0, X.length);
@@ -62,7 +64,7 @@ public class NNWrapper implements RLInterface {
             }
         }
         else{
-            double[] y_hat = this.net.forward(stateActionVector);  // input forward
+            double[] y_hat = this.net.forward(input);  // input forward
             double[] loss = new double[]{newQ - y_hat[0]};  // compute loss
             this.net.backward((Object) loss, this.lr, this.momentum);  // loss backward
         }
@@ -87,19 +89,13 @@ public class NNWrapper implements RLInterface {
     }
 
     private void normalize_X(double[] X){
+        double[] lowerBounds = {0, 0, 0, 0, -180, 0, 0, 0};
+        double[] upperBounds = {800, 600, 200, 360, 180, 1000, 200, 4};
         for (int i=0; i<X.length; i++) {
-            double interval;
-            if(i < State.length){
-                // state
-                interval = 2. / (State.upperBounds[i] - State.lowerBounds[i]);
-                // normalize
-                X[i] = Math.min(1, Math.max(-1., -1. + (X[i] - State.lowerBounds[i]) * interval));
-            }
-            else{
-                // action
-                interval = 2. / (Action.values().length - 1);
-                // normalize
-                X[i] = Math.min(1., Math.max(-1., -1. + X[i] * interval));
+            double interval = 2. / (upperBounds[i] - lowerBounds[i]);;
+            X[i] = -1. + (X[i] - lowerBounds[i]) * interval;
+            if(X[i] < -1 && -1 - X[i] > 0.05 || X[i] > 1 && X[i] -1 > 0.05){
+                System.out.println("[WARN] Input at index " + i + " at value " + X[i] + " out of range.");
             }
         }
     }

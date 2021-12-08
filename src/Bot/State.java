@@ -1,5 +1,8 @@
 package Bot;
 
+import LUT.LUTInterface;
+import NN.NeuralNetInterface;
+
 public class State {
     public static int length = 7;
     private double x;
@@ -16,11 +19,18 @@ public class State {
     private double enemyVelocity;
     private double velocity;
     private double gunHeading;
+    // settings
+    private boolean quantize;
 
     // constructor
-    public State(){
+    public State(RLInterface agent){
         // set to default
-
+        if(agent instanceof LUTInterface){
+            quantize = true;
+        }
+        else if(agent instanceof NeuralNetInterface){
+            quantize = false;
+        }
     }
 
     // setters
@@ -62,16 +72,26 @@ public class State {
 
     // state vector
     public double[] getStateVector(){
-        return new double[]{
-                quantizeX(this.x), quantizeY(this.y),
-                Energy.quantizeEnergy(this.energy).getValue(),
-                Heading.quantizeHeading(this.heading, this.x, this.y).getValue(),
-//                Velocity.quantizeVelocity(this.velocity).getValue(),
-                Bearing.quantizeBearing(this.enemyBearing, this.x, this.y).getValue(),
-                Distance.quantizeDistance(this.enemyDistance).getValue(),
-                Energy.quantizeEnergy(this.enemyEnergy).getValue(),
-//                Velocity.quantizeVelocity(this.enemyVelocity).getValue()
-        };
+        if(this.quantize) {
+            return new double[]{
+                    quantizeX(this.x), quantizeY(this.y),
+                    Energy.quantizeEnergy(this.energy).getValue(),
+                    Heading.quantizeHeading(this.heading, this.x, this.y).getValue(),
+                    Bearing.quantizeBearing(this.enemyBearing, this.x, this.y).getValue(),
+                    Distance.quantizeDistance(this.enemyDistance).getValue(),
+                    Energy.quantizeEnergy(this.enemyEnergy).getValue(),
+            };
+        }
+        else{
+            return new double[]{
+                    this.x, this.y,
+                    this.energy,
+                    this.heading,
+                    this.enemyBearing,
+                    this.enemyDistance,
+                    this.enemyEnergy,
+            };
+        }
     }
 
 
