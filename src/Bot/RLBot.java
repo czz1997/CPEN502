@@ -65,8 +65,8 @@ public class RLBot extends AdvancedRobot{
         boolean firstAct = true;  // indicator for first action
 
         // decrease epsilon to 0 by 4000 rounds
-        if((rounds+1) % 250 == 0){
-            epsilon = epsilon * 0.5;
+        if((rounds+1) % 50 == 0){
+            epsilon = epsilon * 0.9;
         }
 
         // loop for normal behaviours
@@ -164,7 +164,7 @@ public class RLBot extends AdvancedRobot{
             targetStateActionVector[targetStateActionVector.length - 1] = 0;
         }
         double prevQ = agent.forward(this.previousStateActionVector)[0];
-        this.instantReward = Math.max(-1., Math.min(1., this.instantReward));
+//        this.instantReward = Math.max(-1., Math.min(1., this.instantReward));
         double newQ = prevQ + this.alpha * (this.instantReward +
                 this.gamma * agent.forward(targetStateActionVector)[0] - prevQ);
         // update total rewards
@@ -332,7 +332,7 @@ public class RLBot extends AdvancedRobot{
         // update statistics
         rounds += 1;
         roundTo100 += 1;
-        if(roundTo100 == 200) {
+        if(roundTo100 == 50) {
             this.printMatchStatistics();
             roundTo100 = 0;
             wins = 0;
@@ -342,6 +342,6 @@ public class RLBot extends AdvancedRobot{
 
     public void onBattleEnded(BattleEndedEvent event){
         // save model
-        agent.save(new File(getDataDirectory() + "\\" + this.modelFileName));
+//        agent.save(new File(getDataDirectory() + "\\" + this.modelFileName));
     }
 }

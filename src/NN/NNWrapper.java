@@ -18,8 +18,8 @@ public class NNWrapper implements RLInterface {
     double lr = 0.0005;
     double momentum = 0.95;
     int buffer_size = 20000;
-    boolean buffer_enabled = false;
-    int replay_sample_size = 8;
+    boolean buffer_enabled = true;
+    int replay_sample_size = 10;
 
     public NNWrapper(){
         // net

@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Linear implements NeuralNetInterface {
     // NN essentials
@@ -37,10 +35,9 @@ public class Linear implements NeuralNetInterface {
 
     @Override
     public void initializeWeights() {
-        Random random = new Random(123);
         for (int i = 0; i < this.weights.length; i++)
             for (int j = 0; j < this.weights[0].length; j++) {
-                this.weights[i][j] = random.nextDouble() - 0.5; // initialize weights to range (-0.5, 0.5)
+                this.weights[i][j] = Math.random() - 0.5; // initialize weights to range (-0.5, 0.5)
             }
     }
 
