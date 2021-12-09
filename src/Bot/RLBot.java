@@ -46,7 +46,7 @@ public class RLBot extends AdvancedRobot{
     static Random random = new Random();
 
     // RL hypers
-    public static double epsilon = 0.8;  // exploration rate, reduced over time
+    public static double epsilon = 0.6;  // exploration rate, reduced over time
     private final double alpha = 0.3;  // learning rate
     private final double gamma = 0.9;  // discount factor
     private final boolean offPolicy = true;  // policy indicator
@@ -65,8 +65,8 @@ public class RLBot extends AdvancedRobot{
         boolean firstAct = true;  // indicator for first action
 
         // decrease epsilon to 0 by 4000 rounds
-        if((rounds+1) % 35 == 0){
-            epsilon = epsilon * 0.9;
+        if((rounds+1) % 250 == 0){
+            epsilon = epsilon * 0.5;
         }
 
         // loop for normal behaviours
@@ -164,7 +164,7 @@ public class RLBot extends AdvancedRobot{
             targetStateActionVector[targetStateActionVector.length - 1] = 0;
         }
         double prevQ = agent.forward(this.previousStateActionVector)[0];
-//        this.instantReward = Math.max(-1, Math.min(1, this.instantReward));
+        this.instantReward = Math.max(-1., Math.min(1., this.instantReward));
         double newQ = prevQ + this.alpha * (this.instantReward +
                 this.gamma * agent.forward(targetStateActionVector)[0] - prevQ);
         // update total rewards
